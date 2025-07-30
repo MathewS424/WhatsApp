@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Core WhatsApp Colors -->
+    <color name="colorPrimary">#075E54</color>        <!-- Deep Sea Green (Toolbar, Header) -->
+    <color name="colorPrimaryDark">#064C47</color>    <!-- Darker shade for status bar -->
+    <color name="colorAccent">#25D366</color>         <!-- WhatsApp Green (Floating Action Button, Accents) -->
+    <color name="colorMessageSent">#dcf8c6</color>    <!-- Light Green (Sent Message Bubble) -->
+    <color name="colorMessageReceived">#FFFFFF</color> <!-- White (Received Message Bubble) -->
+    <color name="colorBackground">#ece5dd</color>     <!-- Chat Background -->
+    <color name="colorSurface">#128C7E</color>        <!-- Teal (Secondary UI, Action Bar) -->
+    <color name="colorLink">#34b7f1</color>           <!-- Blue (Links, ticks) -->
+    <color name="colorTextPrimary">#000000</color>    <!-- Main text color -->
+    <color name="colorTextSecondary">#757575</color>  <!-- Secondary text color -->
+    <color name="colorDivider">#e0e0e0</color>        <!-- Divider lines -->
+    <color name="colorChatInputBackground">#FFFFFF</color> <!-- Input background -->
+
+    <!-- Basic Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+
+
+</resources>

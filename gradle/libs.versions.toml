@@ -1,0 +1,119 @@
+# WhatsApp/gradle/libs.versions.toml
+
+[versions]
+# Existing versions (update if newer stable versions are found below)
+agp = "8.7.3"       # Your current Android Gradle Plugin version
+kotlin = "2.0.0"    # CHANGED FROM 1.9.24 to 2.0.0 (Align with Firebase requirement and root build.gradle.kts)
+
+# Core AndroidX dependencies (update these to match or exceed your current)
+androidx-core-ktx = "1.13.1" # Using latest for new project
+androidx-junit = "1.2.1"     # Your current JUnit version
+junit = "4.13.2"             # Your current JUnit version
+androidx-espresso-core = "3.6.1" # Your current Espresso version
+androidx-appcompat = "1.7.0" # Using latest stable
+material = "1.12.0"          # Your current Material version
+androidx-activity = "1.9.0"  # Using latest for new project (used for activity-ktx)
+androidx-constraintlayout = "2.1.4" # Latest stable
+
+google-services = "4.4.1"
+
+# New versions for MVVM Architecture Components
+androidx-lifecycle = "2.8.0" # Combined version for lifecycle components
+androidx-navigation = "2.7.7" # Latest stable
+androidx-fragment = "1.8.0" # Latest for fragment-ktx
+
+# Room Database
+androidx-room = "2.6.1" # Latest stable
+
+# Retrofit & OkHttp (for API calls)
+retrofit = "2.11.0" # Latest stable
+okhttp = "4.12.0"   # Latest stable - logging interceptor follows this
+
+# Firebase (using Firebase Android BoM for consistent versions)
+firebase-bom = "33.16.0" # Latest stable Firebase Android BoM (July 2025)
+
+# Dagger Hilt
+hilt-android = "2.51.1" # Latest stable
+# IMPORTANT: ksp version *must* match your Kotlin version.
+# For Kotlin 2.0.0, a compatible KSP is 2.0.0-1.0.21 (or newer 2.0.0-x.y.z version)
+ksp = "2.0.0-1.0.21" # CHANGED FROM 1.9.24-1.0.20 to 2.0.0-1.0.21
+
+# Kotlin Coroutines
+kotlinx-coroutines = "1.8.1" # Latest stable
+
+# Lottie (for animations)
+lottie = "6.4.0"
+activity = "1.10.1"
+# activity = "1.10.1" // This is a duplicate as androidx-activity is already defined. Removing to avoid confusion.
+
+
+[libraries]
+# Existing libraries (re-checked against latest versions)
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" } # Changed to -ktx for consistency
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
+
+# MVVM Architecture Components
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-compiler = { group = "androidx.lifecycle", name = "lifecycle-compiler", version.ref = "androidx-lifecycle" } # Annotation processor
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidx-fragment" }
+
+
+# Room Database
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
+# IMPORTANT: Use KSP for the compiler.
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" } # Will be used with ksp() not kapt()
+
+
+# Navigation Component
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "androidx-navigation" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidx-navigation" }
+
+
+# Retrofit & OkHttp
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" } # For JSON parsing
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" } # Logging network requests
+
+
+# Firebase (Using the BoM for version management)
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" } # Version managed by BoM
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx" } # Version managed by BoM
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx" } # For media uploads
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx" } # For push notifications
+
+# Dagger Hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-android" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt-android" } # Compiler uses same version as core Hilt
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-android" }
+
+
+# Lottie (for animations)
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+
+# Kotlin Coroutines
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+# androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" } // Removed, as androidx-activity-ktx covers this with same version.ref
+
+
+[plugins]
+# Existing plugins
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+# New plugins (must match the 'alias(libs.plugins.NAME)' in project-level build.gradle.kts)
+google-android-libraries-mapsplatform-secrets-gradlePlugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version = "2.0.1" } # Check latest
+google-gms-googleServices = { id = "com.google.gms.google-services", version.ref = "google-services" }
+google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_search"
+        android:icon="@drawable/icon_search"
+        android:title="Search"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/invite_a_friend"
+        android:title="Invite A Friend"/>
+    <item android:id="@+id/contacts"
+        android:title="Contacts"/>
+    <item android:id="@+id/refresh"
+        android:title="Refresh"/>
+    <item android:id="@+id/help"
+        android:title="Help"/>
+
+</menu>
