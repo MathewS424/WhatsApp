@@ -4,14 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.gms.dynamic.SupportFragmentWrapper
+
 import com.google.android.material.tabs.TabLayoutMediator
 import com.midas.whatsapp.R
 import com.midas.whatsapp.View.adapter.MainViewPagerAdapter
@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
         setupViewPagerAndTabs()
         setupFab()
+        setUpObservers()
 
 
 
@@ -68,10 +69,13 @@ class MainActivity : AppCompatActivity() {
     private fun setupFab(){
         mainBinding.fabShowContacts.setOnClickListener {
             Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this@MainActivity, UserListActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
-    private fun setUpListeners() {
+    private fun triggerLogout() {
 
         signInViewModel.signOut()
         val intent = Intent(this@MainActivity, SignUpActivity::class.java)
@@ -88,7 +92,6 @@ class MainActivity : AppCompatActivity() {
                         .show()
                     val intent = Intent(this@MainActivity, SignUpActivity::class.java)
                     startActivity(intent)
-                    finish()
                 }
 
                 is CustomResult.Failure -> {
@@ -115,8 +118,8 @@ class MainActivity : AppCompatActivity() {
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                     Toast.makeText(this@MainActivity, "Search submitted: $query", Toast.LENGTH_SHORT).show()
-
+                    Toast.makeText(this@MainActivity, "Search submitted: $query", Toast.LENGTH_SHORT).show()
+                    searchMenuItem?.collapseActionView() // To collapse after search
                     return true
                 }
 
@@ -158,8 +161,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.logOut -> {
-                setUpListeners()
-                setUpObservers()
+                triggerLogout()
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -21,8 +21,9 @@ class FirebaseChatRepositoryImpl : ChatRepository {
     override suspend fun sendMessage(message: Message): CustomResult<Unit> {
         return try {
             val chatRoomId = getChatRoomId(message.senderId, message.receiverId)
+
             val newMessageRef = chatsReference.child(chatRoomId).push()
-            val messageWithId = message.copy(id = newMessageRef.key!!)
+            val messageWithId = message.copy(id = newMessageRef.key ?: "")
             newMessageRef.setValue(messageWithId).await()
             CustomResult.success(Unit)
         } catch (e: Exception) {

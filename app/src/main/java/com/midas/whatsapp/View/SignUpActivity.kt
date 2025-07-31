@@ -9,11 +9,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.midas.whatsapp.Model.data.User
+import com.midas.whatsapp.Model.repository.FirebaseChatRepositoryImpl
 import com.midas.whatsapp.R
 import com.midas.whatsapp.ViewModel.LoginViewModel
 import com.midas.whatsapp.ViewModel.SignUpViewModel
 import com.midas.whatsapp.databinding.ActivitySignUpBinding
 import com.midas.whatsapp.util.CustomResult
+import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -40,8 +44,12 @@ class SignUpActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         signInViewModel.currentUser.observe(this) { user ->
-            if (user != null){
-                Toast.makeText(this@SignUpActivity, "Welcome back, ${user.email}!", Toast.LENGTH_SHORT).show()
+            if (user != null) {
+                Toast.makeText(
+                    this@SignUpActivity,
+                    "Welcome back, ${user.email}!",
+                    Toast.LENGTH_SHORT
+                ).show()
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -88,9 +96,36 @@ class SignUpActivity : AppCompatActivity() {
             when (result) {
                 is CustomResult.Success -> {
                     Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@SignUpActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    val firebaseUser = result.data
+
+                    val user = firebaseUser.email?.split("@")?.get(0)?.let {
+                        User(
+                            uid = firebaseUser.uid,
+                            email = firebaseUser.email.toString(),
+                            displayName = it
+                        )
+                    }
+                    val chatRepository = FirebaseChatRepositoryImpl()
+
+                    lifecycleScope.launch {
+                        when(val saveUserResult = user?.let { chatRepository.saveUser(it) }){
+                            is CustomResult.Success->{
+                                Toast.makeText(this@SignUpActivity, "User profile saved!", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@SignUpActivity, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                            is CustomResult.Failure -> {
+                                Toast.makeText(this@SignUpActivity, "Failed to save user profile: ${saveUserResult.exception.message}", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@SignUpActivity, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+
+                            null -> TODO()
+                        }
+                    }
+
                 }
 
                 is CustomResult.Failure -> {
@@ -111,7 +146,6 @@ class SignUpActivity : AppCompatActivity() {
             signUpBinding.editTextSignUpPassword.isEnabled = !isLoading
         }
     }
-
 
 
 }

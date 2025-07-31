@@ -13,6 +13,9 @@
     <color name="colorTextSecondary">#757575</color>  <!-- Secondary text color -->
     <color name="colorDivider">#e0e0e0</color>        <!-- Divider lines -->
     <color name="colorChatInputBackground">#FFFFFF</color> <!-- Input background -->
+    <color name="chat_bubble_sent">#DCF8C6</color>
+    <color name="chat_bubble_received">#FFFFFF</color>
+    <color name="chat_background_light">#ECE5DD</color>
 
     <!-- Basic Colors -->
     <color name="black">#FF000000</color>
