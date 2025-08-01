@@ -25,7 +25,9 @@ class UserAdapter(private val onItemClicked: (User) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
-                onItemClicked(getItem(adapterPosition))
+                if(position!= RecyclerView.NO_POSITION) {
+                    onItemClicked(getItem(position))
+                }
             }
         }
 
