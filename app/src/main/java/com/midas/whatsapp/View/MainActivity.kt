@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show()
             val intent = Intent(this@MainActivity, UserListActivity::class.java)
             startActivity(intent)
-            finish()
         }
     }
 

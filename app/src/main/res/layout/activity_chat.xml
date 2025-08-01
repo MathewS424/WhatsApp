@@ -104,7 +104,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="8dp"
-        android:background="@color/white"
+        android:gravity="center"
+        android:background="@color/chat_background_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -114,24 +115,29 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Type your message..."
+            android:hint="Message"
             android:inputType="textMultiLine|textCapSentences"
             android:maxLines="5"
             android:minHeight="48dp"
             android:padding="12dp"
-            android:background="@drawable/rounded_edittext" />
+            android:background="@drawable/rounded_edittext"
+            android:drawableStart="@drawable/icon_insert_emoticon"
+            android:drawablePadding="12dp"
+            android:drawableEnd="@drawable/icon_attach_file"
+            android:drawableRight="@drawable/icon_open_camera"
+            >
 
-        <ImageButton
+        </EditText>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Send Message"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:src="@drawable/ic_send" />
-
+            android:src="@drawable/icon_mic"
+            android:backgroundTint="@color/colorAccent"
+            app:tint="@color/white"
+            app:shapeAppearanceOverlay="@style/RoundedFab"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
     <ProgressBar

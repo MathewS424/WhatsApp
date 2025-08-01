@@ -7,17 +7,68 @@
     android:id="@+id/userListMain"
     tools:context=".View.UserListActivity">
 
-    <TextView
-        android:id="@+id/tvUsersTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select a User to Chat"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/userListToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimaryDark"
+        android:theme="@style/ToolbarTheme"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/menu_user_list">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            >
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Select contact"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/toolbar_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="305 Users"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="normal"
+                android:layout_marginTop="2dp" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/et_search_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/white"
+            android:hint="Search..."
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:visibility="gone" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewUsers"
@@ -27,7 +78,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUsersTitle"
+        app:layout_constraintTop_toBottomOf="@+id/userListToolbar"
         tools:listitem="@layout/item_user" />
 
     <ProgressBar

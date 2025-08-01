@@ -1,6 +1,9 @@
 package com.midas.whatsapp.View
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -28,6 +31,8 @@ class ChatActivity : AppCompatActivity() {
     private var otherUserId: String? = null
     private var otherUserName: String? = null
 
+    private var isSendMode = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -43,8 +48,9 @@ class ChatActivity : AppCompatActivity() {
         otherUserId = intent.getStringExtra("otherUserId")
         otherUserName = intent.getStringExtra("otherUserName")
 
-        if(otherUserId == null){
-            Toast.makeText(this@ChatActivity, "Error: No user to chat with.", Toast.LENGTH_SHORT).show()
+        if (otherUserId == null) {
+            Toast.makeText(this@ChatActivity, "Error: No user to chat with.", Toast.LENGTH_SHORT)
+                .show()
             finish()
             return
         }
@@ -60,24 +66,28 @@ class ChatActivity : AppCompatActivity() {
         setUpListeners()
         setUpObservers()
 
-        otherUserId?.let{chatViewModel.initializeChat(it)}
+        otherUserId?.let { chatViewModel.initializeChat(it) }
 
     }
 
     //  Handle toolbar back button click
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        if(item.itemId == android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             onBackPressedDispatcher.onBackPressed()
             return true
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setUpRecyclerView(){
+    private fun setUpRecyclerView() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        if(currentUserId == null){
-            Toast.makeText(this@ChatActivity, "Authentication error. Please log in again.", Toast.LENGTH_SHORT).show()
+        if (currentUserId == null) {
+            Toast.makeText(
+                this@ChatActivity,
+                "Authentication error. Please log in again.",
+                Toast.LENGTH_SHORT
+            ).show()
             finish()
             return
         }
@@ -87,8 +97,9 @@ class ChatActivity : AppCompatActivity() {
         binding.recyclerViewMessages.adapter = messageAdapter
     }
 
-    private fun setUpListeners(){
+    private fun setUpListeners() {
         binding.btnSend.setOnClickListener {
+            switchToMicIcon()
             val messageText = binding.etMessage.text.toString()
             if (messageText.isNotBlank()) { // Add a check to prevent sending empty messages
                 otherUserId?.let { receiverId ->
@@ -96,31 +107,66 @@ class ChatActivity : AppCompatActivity() {
                     binding.etMessage.text.clear() // Clear the input field immediately after sending
                 }
             } else {
-                Toast.makeText(this@ChatActivity, "Message cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ChatActivity, "Message cannot be empty", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
+
+        binding.etMessage.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                //  No Action
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val isNotEmpty = !s.isNullOrBlank()
+                if (isNotEmpty && !isSendMode) {
+                    switchToSendIcon()
+                } else if (!isNotEmpty && isSendMode) {
+                    switchToMicIcon()
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {
+                // No action
+            }
+        })
     }
 
-    private fun setUpObservers(){
-        chatViewModel.messages.observe(this){ result ->
-            when(result){
+    private fun setUpObservers() {
+        chatViewModel.messages.observe(this) { result ->
+            when (result) {
                 is CustomResult.Success -> {
-                    messageAdapter.submitList(result.data){
-                        if(messageAdapter.itemCount > 0){
+                    messageAdapter.submitList(result.data) {
+                        if (messageAdapter.itemCount > 0) {
                             binding.recyclerViewMessages.scrollToPosition(messageAdapter.itemCount - 1)
                         }
                     }
                 }
+
                 is CustomResult.Failure -> {
-                    Toast.makeText(this@ChatActivity, "Failed to load messages: ${result.exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@ChatActivity,
+                        "Failed to load messages: ${result.exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
 
-        chatViewModel.isLoading.observe(this){isLoading->
+        chatViewModel.isLoading.observe(this) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.btnSend.isEnabled = !isLoading
             binding.etMessage.isEnabled = !isLoading
         }
     }
+
+    private fun switchToSendIcon() {
+        binding.btnSend.setImageResource(R.drawable.ic_send)
+        isSendMode = true
+    }
+
+    private fun switchToMicIcon() {
+        binding.btnSend.setImageResource(R.drawable.icon_mic)
+        isSendMode = false
+    }
+
+
 }
