@@ -112,4 +112,7 @@ dependencies {
     // ViewPager2
     implementation("androidx.viewpager2:viewpager2:1.1.0") // Use the latest stable version
 
+    implementation("com.google.android.material:material:1.2.0") // Or newer
+
+
 }

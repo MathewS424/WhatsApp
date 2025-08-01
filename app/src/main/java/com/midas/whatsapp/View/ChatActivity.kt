@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,6 +39,7 @@ class ChatActivity : AppCompatActivity() {
             insets
         }
 
+
         otherUserId = intent.getStringExtra("otherUserId")
         otherUserName = intent.getStringExtra("otherUserName")
 
@@ -50,6 +52,7 @@ class ChatActivity : AppCompatActivity() {
         // Set up the toolbar for the chat screen
         setSupportActionBar(binding.chatToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.chatToolbar.navigationIcon?.setTint(ContextCompat.getColor(this, R.color.white))
         supportActionBar?.title = ""
         binding.tvOtherUserName.text = otherUserName
 
