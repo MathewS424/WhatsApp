@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.activity)
+    implementation(libs.emoji.google)
     // implementation(libs.androidx.activity) // This is redundant if you're using activity-ktx
     ksp(libs.androidx.room.compiler)
 
@@ -113,6 +114,8 @@ dependencies {
     implementation("androidx.viewpager2:viewpager2:1.1.0") // Use the latest stable version
 
     implementation("com.google.android.material:material:1.2.0") // Or newer
+
+    implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
 
 
 }

@@ -44,6 +44,7 @@ kotlinx-coroutines = "1.8.1" # Latest stable
 # Lottie (for animations)
 lottie = "6.4.0"
 activity = "1.10.1"
+emoji-google = "0.21.0"
 # activity = "1.10.1" // This is a duplicate as androidx-activity is already defined. Removing to avoid confusion.
 
 
@@ -104,6 +105,7 @@ lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+emoji-google = { group = "com.vanniktech", name = "emoji-google", version.ref = "emoji-google" }
 # androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" } // Removed, as androidx-activity-ktx covers this with same version.ref
 
 

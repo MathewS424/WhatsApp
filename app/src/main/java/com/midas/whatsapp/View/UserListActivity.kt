@@ -37,7 +37,7 @@ class UserListActivity : AppCompatActivity() {
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.userListMain)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
             insets
         }
 
@@ -73,12 +73,12 @@ class UserListActivity : AppCompatActivity() {
                         "Search Submitted: ${query}",
                         Toast.LENGTH_SHORT
                     ).show()
-                    searchMenuItem?.collapseActionView()
+//                    searchMenuItem?.collapseActionView()
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    Toast.makeText(this@UserListActivity, "Searching...", Toast.LENGTH_SHORT).show()
+                    userListViewModel.searchUsers(newText.orEmpty())
                     return true
                 }
             })

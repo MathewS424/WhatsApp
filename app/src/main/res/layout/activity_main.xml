@@ -10,10 +10,12 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="85dp"
         android:background="@color/colorPrimaryDark"
         android:visibility="visible"
         android:theme="@style/ToolbarTheme"
+        android:paddingBottom="1dp"
+        android:paddingTop="20dp"
         app:menu="@menu/main_menu">
         <TextView
             android:id="@+id/toolbar_title"

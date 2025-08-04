@@ -1,11 +1,15 @@
 package com.midas.whatsapp.View
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -13,14 +17,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.emoji2.emojipicker.EmojiPickerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.midas.whatsapp.R
 import com.midas.whatsapp.View.adapter.MessageAdapter
 import com.midas.whatsapp.ViewModel.ChatViewModel
 import com.midas.whatsapp.databinding.ActivityChatBinding
-import com.midas.whatsapp.databinding.ItemMessageReceivedBinding
+
 import com.midas.whatsapp.util.CustomResult
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -40,7 +46,7 @@ class ChatActivity : AppCompatActivity() {
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.chatActivityMain)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
             insets
         }
 
@@ -55,6 +61,7 @@ class ChatActivity : AppCompatActivity() {
             return
         }
 
+
         // Set up the toolbar for the chat screen
         setSupportActionBar(binding.chatToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -67,6 +74,7 @@ class ChatActivity : AppCompatActivity() {
         setUpObservers()
 
         otherUserId?.let { chatViewModel.initializeChat(it) }
+
 
     }
 
@@ -97,9 +105,11 @@ class ChatActivity : AppCompatActivity() {
         binding.recyclerViewMessages.adapter = messageAdapter
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setUpListeners() {
         binding.btnSend.setOnClickListener {
             switchToMicIcon()
+            disableEmojiPickerVisibility()
             val messageText = binding.etMessage.text.toString()
             if (messageText.isNotBlank()) { // Add a check to prevent sending empty messages
                 otherUserId?.let { receiverId ->
@@ -112,10 +122,33 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
+        binding.etMessage.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val editText = v as EditText
+                // Check if drawableStart is set
+                val drawableStart = editText.compoundDrawables[0]
+                if (drawableStart != null) {
+                    // Get drawable bounds width
+                    val drawableWidth = drawableStart.bounds.width()
+
+                    // Check touch X is within drawableStart bounds (on the left)
+                    // event.x gives touch position relative to view left
+                    if (event.x <= editText.paddingStart + drawableWidth) {
+                        // Drawable start clicked
+                        emojiWindow()
+                        return@setOnTouchListener true
+                    }
+                }
+            }
+            false
+        }
+
+
         binding.etMessage.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 //  No Action
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val isNotEmpty = !s.isNullOrBlank()
                 if (isNotEmpty && !isSendMode) {
@@ -124,10 +157,16 @@ class ChatActivity : AppCompatActivity() {
                     switchToMicIcon()
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {
                 // No action
             }
         })
+
+        binding.etMessage.setOnClickListener {
+            disableEmojiPickerVisibility()
+            changeEditTextDrawableStartToEmojiIconInsert()
+        }
     }
 
     private fun setUpObservers() {
@@ -166,6 +205,35 @@ class ChatActivity : AppCompatActivity() {
     private fun switchToMicIcon() {
         binding.btnSend.setImageResource(R.drawable.icon_mic)
         isSendMode = false
+    }
+
+    private fun emojiWindow(){
+        if (binding.emojiPicker.visibility == View.VISIBLE) {
+            disableEmojiPickerVisibility()
+            changeEditTextDrawableStartToEmojiIconInsert()
+        } else {
+            enableEmojiPickerVisibility()
+            changeEditTextDrawableStartToIconKeyboard()
+            binding.emojiPicker.setOnEmojiPickedListener {
+                binding.etMessage.append(it.emoji)
+            }
+        }
+    }
+
+    private fun changeEditTextDrawableStartToEmojiIconInsert(){
+        binding.etMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_insert_emoticon, 0, R.drawable.icon_attach_file, 0)
+    }
+
+    private fun changeEditTextDrawableStartToIconKeyboard(){
+        binding.etMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_keyboard, 0, R.drawable.icon_attach_file, 0)
+    }
+
+    private fun enableEmojiPickerVisibility(){
+        binding.emojiPicker.visibility = View.VISIBLE
+    }
+
+    private fun disableEmojiPickerVisibility(){
+        binding.emojiPicker.visibility = View.GONE
     }
 
 

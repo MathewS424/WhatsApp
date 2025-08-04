@@ -2,19 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chatActivityMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/chat_background_light"
-    android:id="@+id/chatActivityMain"
     tools:context=".View.ChatActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/chatToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.12"
         android:background="@color/colorPrimaryDark"
         android:theme="@style/ToolbarTheme"
         app:layout_constraintTop_toTopOf="parent"
+        android:paddingBottom="1dp"
+        android:paddingTop="20dp"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:subtitleTextColor="@color/white"
         app:titleTextColor="@color/white">
@@ -27,27 +30,27 @@
                 android:id="@+id/ivProfilePic"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:src="@drawable/profile_pic"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:src="@drawable/profile_pic"
                 app:shapeAppearanceOverlay="@style/CircleImageView" />
 
             <TextView
                 android:id="@+id/tvOtherUserName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginStart="12dp"
-                app:layout_constraintStart_toEndOf="@id/ivProfilePic"
-                app:layout_constraintEnd_toStartOf="@id/btnVideoCall"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnVideoCall"
+                app:layout_constraintStart_toEndOf="@id/ivProfilePic"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="User Name" />
 
             <ImageButton
@@ -56,10 +59,9 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/icon_video_call"
-                app:layout_constraintEnd_toStartOf="@id/btnCall"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintEnd_toStartOf="@id/btnCall"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/btnCall"
@@ -67,10 +69,10 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/icon_call"
-                app:layout_constraintEnd_toStartOf="@id/btnMenu"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"/>
+                app:layout_constraintEnd_toStartOf="@id/btnMenu"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/btnMenu"
@@ -78,9 +80,9 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/icon_more"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.appbar.MaterialToolbar>
@@ -89,9 +91,9 @@
         android:id="@+id/recyclerViewMessages"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:clipToPadding="false"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutMessageInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,10 +104,10 @@
         android:id="@+id/linearLayoutMessageInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/chat_background_light"
+        android:gravity="center"
         android:orientation="horizontal"
         android:padding="8dp"
-        android:gravity="center"
-        android:background="@color/chat_background_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -115,30 +117,43 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/rounded_edittext"
+            android:drawableStart="@drawable/icon_insert_emoticon"
+            android:drawableEnd="@drawable/icon_attach_file"
+            android:drawableRight="@drawable/icon_open_camera"
+            android:drawablePadding="12dp"
             android:hint="Message"
             android:inputType="textMultiLine|textCapSentences"
             android:maxLines="5"
             android:minHeight="48dp"
-            android:padding="12dp"
-            android:background="@drawable/rounded_edittext"
-            android:drawableStart="@drawable/icon_insert_emoticon"
-            android:drawablePadding="12dp"
-            android:drawableEnd="@drawable/icon_attach_file"
-            android:drawableRight="@drawable/icon_open_camera"
-            >
+            android:padding="12dp">
 
         </EditText>
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_mic"
+            android:layout_marginStart="8dp"
             android:backgroundTint="@color/colorAccent"
-            app:tint="@color/white"
+            android:src="@drawable/icon_mic"
             app:shapeAppearanceOverlay="@style/RoundedFab"
-            android:layout_marginStart="8dp"/>
+            app:tint="@color/white" />
     </LinearLayout>
+
+    <androidx.emoji2.emojipicker.EmojiPickerView
+        android:id="@+id/emoji_picker"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:background="@color/white"
+        app:emojiGridColumns="9"
+        app:layout_constraintBottom_toTopOf="@id/linearLayoutMessageInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.30"
+        app:layout_constraintStart_toStartOf="parent"
+         />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -150,5 +165,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
