@@ -59,11 +59,25 @@
         app:tabTextAppearance="@style/TabLayoutTextAppearance"
         android:visibility="visible"
         />
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tabLayout"/>
+        android:layout_below="@id/tabLayout"
+    />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMainRecentUsers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tabLayout"
+        android:layout_above="@id/fabShowContacts"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        tools:listitem="@layout/item_user" />
+
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabShowContacts"

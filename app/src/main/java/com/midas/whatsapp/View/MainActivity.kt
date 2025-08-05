@@ -12,11 +12,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import com.midas.whatsapp.R
 import com.midas.whatsapp.View.adapter.MainViewPagerAdapter
+import com.midas.whatsapp.View.adapter.UserAdapter
 import com.midas.whatsapp.ViewModel.LoginViewModel
+import com.midas.whatsapp.ViewModel.UserListViewModel
 import com.midas.whatsapp.databinding.ActivityMainBinding
 import com.midas.whatsapp.util.CustomResult
 
@@ -25,6 +29,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainBinding: ActivityMainBinding
 
     private val signInViewModel: LoginViewModel by viewModels()
+    private val userListViewModel: UserListViewModel by viewModels()
+
+    private lateinit var userAdapter: UserAdapter
 
     private var searchMenuItem: MenuItem? = null
 
@@ -45,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         setupViewPagerAndTabs()
         setupFab()
+        setUpRecyclerView()
         setUpObservers()
 
 
@@ -106,6 +114,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        userListViewModel.recentUsers.observe(this){ result ->
+            when(result){
+                is CustomResult.Success -> {
+                    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+                    val filteredUsers = result.data.filter { it.uid != currentUserId }.toList()
+
+                    userAdapter.submitList(filteredUsers)
+
+                }
+                is CustomResult.Failure -> {
+                    Toast.makeText(
+                        this,
+                        "Failed to load users: ${result.exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -118,13 +146,12 @@ class MainActivity : AppCompatActivity() {
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    Toast.makeText(this@MainActivity, "Search submitted: $query", Toast.LENGTH_SHORT).show()
-                    searchMenuItem?.collapseActionView() // To collapse after search
+                    //searchMenuItem?.collapseActionView() // To collapse after search
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    Toast.makeText(this@MainActivity, "Searching: $newText", Toast.LENGTH_SHORT).show()
+                    userListViewModel.searchUsers(newText.orEmpty(), "recent_chat")
                     return true
                 }
             })
@@ -167,5 +194,31 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+
+    private fun setUpRecyclerView(){
+        userAdapter = UserAdapter{user->
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+            if(currentUserId == user.uid){
+                Toast.makeText(
+                    this,
+                    "You cannot chat with yourself. Please select another user.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@UserAdapter
+            }
+            val intent = Intent(this, ChatActivity::class.java).apply {
+                putExtra("otherUserId", user.uid)
+                putExtra("otherUserName", user.displayName ?: user.email)
+            }
+            startActivity(intent)
+        }
+        mainBinding.recyclerViewMainRecentUsers.layoutManager = LinearLayoutManager(this)
+        mainBinding.recyclerViewMainRecentUsers.adapter = userAdapter
+
+    }
+
+
+
 
 }

@@ -68,17 +68,17 @@ class UserListActivity : AppCompatActivity() {
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    Toast.makeText(
-                        this@UserListActivity,
-                        "Search Submitted: ${query}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    Toast.makeText(
+//                        this@UserListActivity,
+//                        "Search Submitted: ${query}",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
 //                    searchMenuItem?.collapseActionView()
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    userListViewModel.searchUsers(newText.orEmpty())
+                    userListViewModel.searchUsers(newText.orEmpty(), "user_list")
                     return true
                 }
             })
