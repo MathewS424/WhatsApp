@@ -1,16 +1,25 @@
 package com.midas.whatsapp.Model.repository
 
+
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
+
 import com.midas.whatsapp.Model.data.Message
 import com.midas.whatsapp.Model.data.User
 import com.midas.whatsapp.util.CustomResult
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class FirebaseChatRepositoryImpl : ChatRepository {
 
@@ -23,8 +32,8 @@ class FirebaseChatRepositoryImpl : ChatRepository {
     override suspend fun sendMessage(message: Message): CustomResult<Unit> {
         return try {
             val chatRoomId = getChatRoomId(message.senderId, message.receiverId)
-
-            val newMessageRef = chatsReference.child(chatRoomId).push()
+            setMessageCount(message, chatRoomId)
+            val newMessageRef = chatsReference.child(chatRoomId).child("messages").push()
             val messageWithId = message.copy(id = newMessageRef.key ?: "")
             newMessageRef.setValue(messageWithId).await()
             CustomResult.success(Unit)
@@ -50,10 +59,10 @@ class FirebaseChatRepositoryImpl : ChatRepository {
             }
 
         }
-        chatsReference.child(chatRoomId)
+        chatsReference.child(chatRoomId).child("messages")
             .addValueEventListener(listener)    // Listen for all messages in the room
         awaitClose {
-            chatsReference.child(chatRoomId).removeEventListener(listener)
+            chatsReference.child(chatRoomId).child("messages").removeEventListener(listener)
         }   // Remove listener when flow is cancelled
 
 
@@ -137,6 +146,33 @@ class FirebaseChatRepositoryImpl : ChatRepository {
         return if (userOneId < userTwoId) "${userOneId}_${userTwoId}" else "${userTwoId}_${userOneId}"
     }
 
+    override fun getMessageCount(userId: String, callback: (String) -> Unit) {
+        val currentUserId = authRepository.getCurrentUser()?.uid
+        if (currentUserId == null) {
+            callback("") // or "0" as default
+            return
+        }
+
+        chatsReference.child(getChatRoomId(currentUserId, userId))
+            .child("${userId}_receiverCount")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val count = snapshot.value?.toString() ?: ""
+                    Log.d("messages", "Count: $count")
+                    callback(count)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    callback("") // or handle error appropriately
+                }
+            })
+    }
+
+    override fun resetMessageCount(userId: String) {
+
+    }
+
+
     private fun getOtherUserId(chatRoomId: String): String{
         val userIdOne = chatRoomId.split("_")[0]
         val userIdTwo = chatRoomId.split("_")[1]
@@ -148,4 +184,34 @@ class FirebaseChatRepositoryImpl : ChatRepository {
             ""
         }
     }
+
+    suspend fun setMessageCount(message: Message, chatRoomId: String){
+        val receiverMessageCountRef = chatsReference.child(chatRoomId).child("${message.senderId}_receiverCount")
+         suspendCancellableCoroutine<Unit> { cont->
+             receiverMessageCountRef.runTransaction(object: Transaction.Handler{
+                 override fun doTransaction(currentData: MutableData): Transaction.Result {
+                      val currentCount = currentData.getValue<Int>() ?: 0
+                     currentData.value = currentCount + 1
+                     return Transaction.success(currentData)
+
+                 }
+
+                 override fun onComplete(
+                     error: DatabaseError?,
+                     committed: Boolean,
+                     currentData: DataSnapshot?
+                 ) {
+                     if(error != null){
+                         cont.resumeWithException(error.toException())
+                     }else{
+                         cont.resume(Unit)
+                     }
+                 }
+             })
+         }
+    }
+
+
+
+
 }

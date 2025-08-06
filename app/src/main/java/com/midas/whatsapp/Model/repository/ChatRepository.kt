@@ -17,4 +17,9 @@ interface ChatRepository {
     suspend fun getUsersByIdsFromAll(userIds: List<String>): Flow<CustomResult<List<User>>>
 
     fun getChatRoomId(userOneId: String, userTwoId: String): String
+
+    fun getMessageCount(userId: String, callback: (String) -> Unit)
+    fun resetMessageCount(userId: String)
+
+
 }

@@ -25,6 +25,9 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
     private val _recentUsers = MutableLiveData<CustomResult<List<User>>>()
     val recentUsers: LiveData<CustomResult<List<User>>> = _recentUsers
 
+    private val _messageCount = MutableLiveData<Int>()
+    val messageCount: LiveData<Int> = _messageCount
+
 
 
 
@@ -113,6 +116,15 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
                         ) == true || user.email?.contains(query, ignoreCase = true) == true)
             }
             _users.value = CustomResult.Success(filteredList)
+        }
+    }
+
+    fun getBubbleMessageCount(userId: String, onCountReceived: (String) -> Unit) {
+        viewModelScope.launch {
+            chatRepository.getMessageCount(userId) { count ->
+                // This block executes when Firebase returns data
+                onCountReceived(count)
+            }
         }
     }
 }

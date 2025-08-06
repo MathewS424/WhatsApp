@@ -64,6 +64,7 @@ class ChatsFragment : Fragment() {
         _binding?.recyclerViewRecentUsers?.layoutManager = LinearLayoutManager(requireContext())
         _binding?.recyclerViewRecentUsers?.adapter = userAdapter
 
+
     }
 
     private fun  setUpObservers(){

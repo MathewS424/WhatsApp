@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp"
+    android:background="@android:color/transparent"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
@@ -64,6 +65,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Yesterday" />
+
+        <TextView
+            android:id="@+id/messageCount"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.050"
+            app:layout_constraintHeight_percent="0.40"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/background_message_count"
+            android:text="1"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewLastMessageTime"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,15 +1,20 @@
 package com.midas.whatsapp.View
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import android.widget.Toast
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private val signInViewModel: LoginViewModel by viewModels()
     private val userListViewModel: UserListViewModel by viewModels()
 
+
     private lateinit var userAdapter: UserAdapter
 
     private var searchMenuItem: MenuItem? = null
@@ -51,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
 
         setupViewPagerAndTabs()
-        setupFab()
+        setupListeners()
         setUpRecyclerView()
         setUpObservers()
 
@@ -75,12 +81,13 @@ class MainActivity : AppCompatActivity() {
         }.attach()
     }
 
-    private fun setupFab(){
+    private fun setupListeners(){
         mainBinding.fabShowContacts.setOnClickListener {
             Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show()
             val intent = Intent(this@MainActivity, UserListActivity::class.java)
             startActivity(intent)
         }
+
     }
 
     private fun triggerLogout() {
@@ -147,10 +154,12 @@ class MainActivity : AppCompatActivity() {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     //searchMenuItem?.collapseActionView() // To collapse after search
+
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
+
                     userListViewModel.searchUsers(newText.orEmpty(), "recent_chat")
                     return true
                 }
@@ -161,6 +170,7 @@ class MainActivity : AppCompatActivity() {
                     mainBinding.toolbarTitle.visibility = android.view.View.GONE
                     mainBinding.tabLayout.visibility = android.view.View.GONE
                     mainBinding.viewPager2.visibility = android.view.View.GONE
+                    mainBinding.recyclerViewMainRecentUsers.visibility = View.VISIBLE
 
                     return true
                 }
@@ -169,6 +179,7 @@ class MainActivity : AppCompatActivity() {
                     mainBinding.toolbarTitle.visibility = android.view.View.VISIBLE
                     mainBinding.tabLayout.visibility = android.view.View.VISIBLE
                     mainBinding.viewPager2.visibility = android.view.View.VISIBLE
+                    mainBinding.recyclerViewMainRecentUsers.visibility = View.GONE
                     searchView.setQuery("", false)
                     return true
                 }
@@ -185,6 +196,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu_camera -> {
                 Toast.makeText(this@MainActivity, "Accessing Camera", Toast.LENGTH_SHORT).show()
+                cameraAccess()
                 true
             }
             R.id.logOut -> {
@@ -218,7 +230,32 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun cameraAccess(){
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            startPermissionRequest()
+        }else{
+            startCamera()
+        }
+    }
 
+    private fun startCamera(){
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivity(intent)
+    }
 
+    private fun startPermissionRequest(){
+        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+            isGranted ->
+        if(isGranted){
+            Toast.makeText(this@MainActivity, "Permission Allowed", Toast.LENGTH_SHORT).show()
+            startCamera()
+        }
+        else{
+            Toast.makeText(this@MainActivity, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 }
