@@ -18,11 +18,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.emoji2.emojipicker.EmojiPickerView
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.midas.whatsapp.R
 import com.midas.whatsapp.View.adapter.MessageAdapter
 import com.midas.whatsapp.ViewModel.ChatViewModel
+import com.midas.whatsapp.ViewModel.UserListViewModel
 import com.midas.whatsapp.databinding.ActivityChatBinding
 
 import com.midas.whatsapp.util.CustomResult
@@ -38,6 +40,8 @@ class ChatActivity : AppCompatActivity() {
     private var otherUserName: String? = null
 
     private var isSendMode = false
+
+    private val userListViewModel: UserListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +87,7 @@ class ChatActivity : AppCompatActivity() {
 
         if (item.itemId == android.R.id.home) {
             onBackPressedDispatcher.onBackPressed()
+            userListViewModel.resetMessageCount(otherUserId.toString())
             return true
         }
         return super.onOptionsItemSelected(item)
