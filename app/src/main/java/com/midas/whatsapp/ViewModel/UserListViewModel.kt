@@ -12,6 +12,7 @@ import com.midas.whatsapp.Model.repository.FirebaseChatRepositoryImpl
 import com.midas.whatsapp.util.CustomResult
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import okhttp3.internal.EMPTY_REQUEST
 
 class UserListViewModel(private val chatRepository: ChatRepository = FirebaseChatRepositoryImpl()) :
     ViewModel() {
@@ -41,18 +42,12 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
         viewModelScope.launch {
             chatRepository.getUsers().collectLatest { result ->
                 _isLoading.value = false
-                when (result) {
-                    is CustomResult.Success -> {
-                        allUsers = result.data
-                        allUsers.forEach { user -> listenForMessageCount(user.uid) }
-                        _users.value = CustomResult.Success(allUsers)
-                    }
-
-                    is CustomResult.Failure -> {
-                        _users.value = CustomResult.Failure(result.exception)
-                    }
+                if(result is CustomResult.Success){
+                    _users.value = CustomResult.Success(result.data)
+                    result.data.forEach { user -> listenForMessageCount(user.uid) }
+                }else if(result is CustomResult.Failure){
+                    _users.value = result
                 }
-
             }
         }
     }
@@ -62,26 +57,18 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
         viewModelScope.launch {
             chatRepository.getRecentChattedUsersId().collectLatest { result ->
                 _isLoading.value = false
-                when (result) {
-
-                    is CustomResult.Success -> {
-                        val userIds = result.data
-                        chatRepository.getUsersByIdsFromAll(userIds).collectLatest { userResult ->
-
-                            if(userResult is CustomResult.Success){
-                                Log.d("message", "recent")
-                                allRecentUsers = userResult.data
-                                allRecentUsers.forEach { user-> listenForMessageCount(user.uid) }
-                            }
+                if(result is CustomResult.Success){
+                    val userIds = result.data
+                    chatRepository.getUsersByIdsFromAll(userIds).collectLatest { userResult->
+                        if(userResult is CustomResult.Success){
                             _recentUsers.value = userResult
-
+                            userResult.data.forEach { user -> listenForMessageCount(user.uid) }
+                        }else if(userResult is CustomResult.Failure){
+                            _recentUsers.value = userResult
                         }
                     }
-
-                    is CustomResult.Failure -> {
-                        _recentUsers.value = CustomResult.Failure(result.exception)
-
-                    }
+                }else if(result is CustomResult.Failure){
+                    _recentUsers.value = result
                 }
             }
         }
