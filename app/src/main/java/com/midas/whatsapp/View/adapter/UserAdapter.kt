@@ -1,6 +1,7 @@
 package com.midas.whatsapp.View.adapter
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,12 @@ import com.midas.whatsapp.ViewModel.UserListViewModel
 class UserAdapter(private val onItemClicked: (User) -> Unit) :
     ListAdapter<User, UserAdapter.UserViewHolder>(UserDiffCallback()) {
 
-    private var userListViewModel = UserListViewModel()
+    private var messageCounts: Map<String, Int> = emptyMap()
+
+    fun setMessageCounts(newCounts: Map<String, Int>){
+        this.messageCounts = newCounts
+        notifyDataSetChanged()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserAdapter.UserViewHolder {
         val binding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return UserViewHolder(binding)
@@ -24,9 +30,9 @@ class UserAdapter(private val onItemClicked: (User) -> Unit) :
     override fun onBindViewHolder(holder: UserAdapter.UserViewHolder, position: Int) {
         val user = getItem(position)
 
-        userListViewModel.getBubbleMessageCount(user.uid){messageCount ->
-            holder.bind(user, messageCount)
-        }
+        val messageCount = messageCounts[user.uid] ?: 0
+        holder.bind(user, messageCount)
+
 
     }
 
@@ -40,14 +46,15 @@ class UserAdapter(private val onItemClicked: (User) -> Unit) :
             }
         }
 
-        fun bind(user: User, messageCount: String) {
+        fun bind(user: User, messageCount: Int) {
             binding.tvUserName.text = user.displayName ?: user.email?.split("@")?.get(0)
             binding.tvUserEmail.text = user.email
-            if(messageCount != ""){
-                binding.messageCount.text = messageCount
-            }else {
+            Log.d("messages", "Bind Value: $messageCount")
+            if(messageCount > 0){
+                binding.messageCount.visibility = View.VISIBLE
+                binding.messageCount.text = messageCount.toString()
+            }else{
                 binding.messageCount.visibility = View.GONE
-                binding.messageCount.text = messageCount
             }
         }
     }

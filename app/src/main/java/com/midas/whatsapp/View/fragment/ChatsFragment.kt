@@ -47,6 +47,7 @@ class ChatsFragment : Fragment() {
     private fun setUpRecyclerView(){
         userAdapter = UserAdapter{user->
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+
             if(currentUserId == user.uid){
                 Toast.makeText(
                     requireContext(),
@@ -55,6 +56,8 @@ class ChatsFragment : Fragment() {
                 ).show()
                 return@UserAdapter
             }
+            userListViewModel.resetMessageCount(user.uid)
+
             val intent = Intent(requireContext(), ChatActivity::class.java).apply {
                 putExtra("otherUserId", user.uid)
                 putExtra("otherUserName", user.displayName ?: user.email)
@@ -86,6 +89,10 @@ class ChatsFragment : Fragment() {
                 }
             }
 
+        }
+
+        userListViewModel.messageCount.observe(viewLifecycleOwner){counts ->
+            userAdapter.setMessageCounts(counts)
         }
     }
 

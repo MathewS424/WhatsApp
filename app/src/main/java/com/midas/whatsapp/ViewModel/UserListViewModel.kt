@@ -25,13 +25,8 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
     private val _recentUsers = MutableLiveData<CustomResult<List<User>>>()
     val recentUsers: LiveData<CustomResult<List<User>>> = _recentUsers
 
-    private val _messageCount = MutableLiveData<Int>()
-    val messageCount: LiveData<Int> = _messageCount
-
-
-
-
-
+    private val _messageCount = MutableLiveData<Map<String, Int>>()
+    val messageCount: LiveData<Map<String,Int>> = _messageCount
 
     private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> = _isLoading
@@ -45,9 +40,11 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
         _isLoading.value = true
         viewModelScope.launch {
             chatRepository.getUsers().collectLatest { result ->
+                _isLoading.value = false
                 when (result) {
                     is CustomResult.Success -> {
                         allUsers = result.data
+                        allUsers.forEach { user -> listenForMessageCount(user.uid) }
                         _users.value = CustomResult.Success(allUsers)
                     }
 
@@ -55,7 +52,7 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
                         _users.value = CustomResult.Failure(result.exception)
                     }
                 }
-                _isLoading.value = false
+
             }
         }
     }
@@ -64,7 +61,9 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
         _isLoading.value = true
         viewModelScope.launch {
             chatRepository.getRecentChattedUsersId().collectLatest { result ->
+                _isLoading.value = false
                 when (result) {
+
                     is CustomResult.Success -> {
                         val userIds = result.data
                         chatRepository.getUsersByIdsFromAll(userIds).collectLatest { userResult ->
@@ -72,17 +71,28 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
                             if(userResult is CustomResult.Success){
                                 Log.d("message", "recent")
                                 allRecentUsers = userResult.data
+                                allRecentUsers.forEach { user-> listenForMessageCount(user.uid) }
                             }
                             _recentUsers.value = userResult
-                            _isLoading.value = false
+
                         }
                     }
 
                     is CustomResult.Failure -> {
                         _recentUsers.value = CustomResult.Failure(result.exception)
-                        _isLoading.value = false
+
                     }
                 }
+            }
+        }
+    }
+
+    private fun listenForMessageCount(otherUserId: String){
+        viewModelScope.launch {
+            chatRepository.getMessageCount(otherUserId).collect{count ->
+                val currentMap = _messageCount.value.orEmpty().toMutableMap()
+                currentMap[otherUserId] = count
+                _messageCount.postValue(currentMap)
             }
         }
     }
@@ -119,12 +129,11 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
         }
     }
 
-    fun getBubbleMessageCount(userId: String, onCountReceived: (String) -> Unit) {
+
+
+    fun resetMessageCount(userId: String){
         viewModelScope.launch {
-            chatRepository.getMessageCount(userId) { count ->
-                // This block executes when Firebase returns data
-                onCountReceived(count)
-            }
+            chatRepository.resetMessageCount(userId)
         }
     }
 }

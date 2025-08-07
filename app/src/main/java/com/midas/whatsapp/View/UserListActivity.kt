@@ -106,6 +106,7 @@ class UserListActivity : AppCompatActivity() {
         userAdapter = UserAdapter { user ->
 
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+            userListViewModel.resetMessageCount(user.uid)
             if (currentUserId == user.uid) {
                 Toast.makeText(
                     this,

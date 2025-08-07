@@ -2,6 +2,8 @@ package com.midas.whatsapp.Model.repository
 
 
 import android.util.Log
+import android.widget.Toast
+import androidx.core.app.PendingIntentCompat.send
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -146,31 +148,52 @@ class FirebaseChatRepositoryImpl : ChatRepository {
         return if (userOneId < userTwoId) "${userOneId}_${userTwoId}" else "${userTwoId}_${userOneId}"
     }
 
-    override fun getMessageCount(userId: String, callback: (String) -> Unit) {
-        val currentUserId = authRepository.getCurrentUser()?.uid
-        if (currentUserId == null) {
-            callback("") // or "0" as default
+    override fun getMessageCount(otherUserId: String): Flow<Int> = callbackFlow{
+         val currentUserId = authRepository.getCurrentUser()?.uid
+        if(currentUserId == null){
+            send(0)
+            close()
+            return@callbackFlow
+        }
+
+        val chatRoomId = getChatRoomId(currentUserId, otherUserId)
+        val listener = object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val count = snapshot.getValue(Int::class.java) ?: 0
+                trySend(count).isSuccess
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+
+        }
+
+        val countRef = chatsReference.child(chatRoomId).child("${otherUserId}_receiverCount")
+
+        countRef.addValueEventListener(listener)
+
+        awaitClose { countRef.removeEventListener(listener) }
+    }
+
+
+    override fun resetMessageCount(userId: String) {
+         val currentUserId = authRepository.getCurrentUser()?.uid
+        if(currentUserId == null){
             return
         }
 
-        chatsReference.child(getChatRoomId(currentUserId, userId))
-            .child("${userId}_receiverCount")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val count = snapshot.value?.toString() ?: ""
-                    Log.d("messages", "Count: $count")
-                    callback(count)
+        chatsReference.child(getChatRoomId(currentUserId, userId)).child("${userId}_receiverCount").setValue(0)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    Log.d("messages", "Message Count reset to 0")
+                }else{
+                    Log.d("messages", "Message Count: Failure")
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    callback("") // or handle error appropriately
-                }
-            })
+            }
     }
 
-    override fun resetMessageCount(userId: String) {
 
-    }
 
 
     private fun getOtherUserId(chatRoomId: String): String{
@@ -190,7 +213,7 @@ class FirebaseChatRepositoryImpl : ChatRepository {
          suspendCancellableCoroutine<Unit> { cont->
              receiverMessageCountRef.runTransaction(object: Transaction.Handler{
                  override fun doTransaction(currentData: MutableData): Transaction.Result {
-                      val currentCount = currentData.getValue<Int>() ?: 0
+                      val currentCount = currentData.getValue(Int::class.java) ?: 0
                      currentData.value = currentCount + 1
                      return Transaction.success(currentData)
 

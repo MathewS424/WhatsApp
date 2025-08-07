@@ -18,8 +18,8 @@ interface ChatRepository {
 
     fun getChatRoomId(userOneId: String, userTwoId: String): String
 
-    fun getMessageCount(userId: String, callback: (String) -> Unit)
-    fun resetMessageCount(userId: String)
+    fun getMessageCount(otherUserId: String): Flow<Int>
+    fun resetMessageCount(otherUserId: String)
 
 
 }
