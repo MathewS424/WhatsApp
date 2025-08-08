@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.midas.whatsapp.databinding.ItemUserBinding
 import com.midas.whatsapp.Model.data.User
-import com.midas.whatsapp.ViewModel.UserListViewModel
+
 
 class UserAdapter(private val onItemClicked: (User) -> Unit) :
     ListAdapter<User, UserAdapter.UserViewHolder>(UserDiffCallback()) {

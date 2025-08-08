@@ -199,6 +199,12 @@ class MainActivity : AppCompatActivity() {
                 cameraAccess()
                 true
             }
+            R.id.settings -> {
+                Toast.makeText(this@MainActivity, "Settings", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.logOut -> {
                 triggerLogout()
                 true
