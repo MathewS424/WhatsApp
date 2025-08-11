@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -128,7 +129,7 @@ class MainActivity : AppCompatActivity() {
                     val filteredUsers = result.data.filter { it.uid != currentUserId }.toList()
 
                     userAdapter.submitList(filteredUsers)
-
+                    Log.d("message", "recent_users_ set up observers")
                 }
                 is CustomResult.Failure -> {
                     Toast.makeText(
@@ -159,7 +160,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-
+                    Log.d("message", "Searching..Main Activity")
                     userListViewModel.searchUsers(newText.orEmpty(), "recent_chat")
                     return true
                 }

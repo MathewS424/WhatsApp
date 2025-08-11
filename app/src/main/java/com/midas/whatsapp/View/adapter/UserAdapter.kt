@@ -49,7 +49,6 @@ class UserAdapter(private val onItemClicked: (User) -> Unit) :
         fun bind(user: User, messageCount: Int) {
             binding.tvUserName.text = user.displayName ?: user.email?.split("@")?.get(0)
             binding.tvUserEmail.text = user.email
-            Log.d("messages", "Bind Value: $messageCount")
             if(messageCount > 0){
                 binding.messageCount.visibility = View.VISIBLE
                 binding.messageCount.text = messageCount.toString()

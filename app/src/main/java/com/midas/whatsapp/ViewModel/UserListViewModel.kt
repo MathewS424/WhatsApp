@@ -12,7 +12,7 @@ import com.midas.whatsapp.Model.repository.FirebaseChatRepositoryImpl
 import com.midas.whatsapp.util.CustomResult
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okhttp3.internal.EMPTY_REQUEST
+
 
 class UserListViewModel(private val chatRepository: ChatRepository = FirebaseChatRepositoryImpl()) :
     ViewModel() {
@@ -43,7 +43,8 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
             chatRepository.getUsers().collectLatest { result ->
                 _isLoading.value = false
                 if(result is CustomResult.Success){
-                    _users.value = CustomResult.Success(result.data)
+                    allUsers = result.data
+                    _users.value = CustomResult.Success(allUsers)
                     result.data.forEach { user -> listenForMessageCount(user.uid) }
                 }else if(result is CustomResult.Failure){
                     _users.value = result
@@ -61,8 +62,9 @@ class UserListViewModel(private val chatRepository: ChatRepository = FirebaseCha
                     val userIds = result.data
                     chatRepository.getUsersByIdsFromAll(userIds).collectLatest { userResult->
                         if(userResult is CustomResult.Success){
-                            _recentUsers.value = userResult
-                            userResult.data.forEach { user -> listenForMessageCount(user.uid) }
+                            allRecentUsers = userResult.data
+                            _recentUsers.value = CustomResult.Success(allRecentUsers)
+                            allRecentUsers.forEach { user -> listenForMessageCount(user.uid) }
                         }else if(userResult is CustomResult.Failure){
                             _recentUsers.value = userResult
                         }

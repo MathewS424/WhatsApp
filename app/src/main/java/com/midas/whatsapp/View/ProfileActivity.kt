@@ -34,7 +34,7 @@ class ProfileActivity : AppCompatActivity() {
             SettingsItem(R.drawable.ic_person, "Name", "Mathews Jose"),
             SettingsItem(R.drawable.ic_about, "About", "NEVER QUIT REPEAT"),
             SettingsItem(R.drawable.icon_call, "Phone", "+91 9074237884"),
-            SettingsItem(R.drawable.icon_call, "Links", "Add links")
+            SettingsItem(R.drawable.ic_link, "Links", "Add links")
             )
     }
 
