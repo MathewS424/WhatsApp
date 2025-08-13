@@ -5,5 +5,5 @@ data class User(
     val email: String = "",
     val displayName: String = "",
     val profileImageUrl: String = "",
-    val about: String = ""
+    val about: String = "Hey there! I'm using WhatsApp"
 )

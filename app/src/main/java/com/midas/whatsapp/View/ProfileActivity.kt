@@ -39,10 +39,11 @@ class ProfileActivity : AppCompatActivity() {
         viewModel.userProfile.observe(this){user ->
             if(user != null) {
                 val userName = user.displayName
+                val about = user.about
 
                 profileData = listOf(
                     SettingsItem(R.drawable.ic_person, "Name", userName, "NAME"),
-                    SettingsItem(R.drawable.ic_about, "About", "NEVER QUIT REPEAT", "ABOUT"),
+                    SettingsItem(R.drawable.ic_about, "About", about, "ABOUT"),
                     SettingsItem(R.drawable.icon_call, "Phone", "+91 9074237884", "PHONE"),
                     SettingsItem(R.drawable.ic_link, "Links", "Add links", "LINKS")
                 )
@@ -57,6 +58,10 @@ class ProfileActivity : AppCompatActivity() {
             when (item.actionType) {
                 "NAME" -> {
                     val intent = Intent(this, ChangeNameActivity::class.java)
+                    startActivity(intent)
+                }
+                "ABOUT" -> {
+                    val intent = Intent(this, ChangeAboutActivity::class.java)
                     startActivity(intent)
                 }
             }
