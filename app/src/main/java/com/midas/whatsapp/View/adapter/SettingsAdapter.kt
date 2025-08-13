@@ -8,11 +8,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.midas.whatsapp.Model.data.SettingsItem
 import com.midas.whatsapp.databinding.ItemSettingsListBinding
 
-class SettingsAdapter(private val context: Context, private val settingsList: List<SettingsItem>) :
+class SettingsAdapter(private val settingsList: List<SettingsItem>, private val onItemClicked: (SettingsItem) -> Unit) :
     RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder>() {
 
     inner class SettingsViewHolder(private val binding: ItemSettingsListBinding) :
         RecyclerView.ViewHolder(binding.root) {
+            init {
+                binding.root.setOnClickListener {
+                    if(adapterPosition != RecyclerView.NO_POSITION){
+                        onItemClicked(settingsList[adapterPosition])
+                    }
+                }
+            }
         fun bind(item: SettingsItem) {
             binding.iconView.setImageResource(item.iconResId)
 

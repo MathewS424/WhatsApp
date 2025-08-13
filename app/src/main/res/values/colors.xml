@@ -16,6 +16,7 @@
     <color name="chat_bubble_sent">#DCF8C6</color>
     <color name="chat_bubble_received">#FFFFFF</color>
     <color name="chat_background_light">#ECE5DD</color>
+    <color name="colorOutlineStroke">#1daa61</color>
 
     <!-- Basic Colors -->
     <color name="black">#FF000000</color>

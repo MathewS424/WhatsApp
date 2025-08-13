@@ -2,15 +2,12 @@ package com.midas.whatsapp.Model.repository
 
 
 import android.util.Log
-import android.widget.Toast
-import androidx.core.app.PendingIntentCompat.send
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.MutableData
 import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 
 import com.midas.whatsapp.Model.data.Message
 import com.midas.whatsapp.Model.data.User
@@ -80,9 +77,9 @@ class FirebaseChatRepositoryImpl : ChatRepository {
     }
 
     override fun getUsers(): Flow<CustomResult<List<User>>> = callbackFlow {
-        val listener = object: ValueEventListener{
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                 val users = mutableListOf<User>()
+                val users = mutableListOf<User>()
                 snapshot.children.forEach { userSnapshot ->
                     val user = userSnapshot.getValue(User::class.java)
                     user?.let { users.add(it) }
@@ -90,6 +87,7 @@ class FirebaseChatRepositoryImpl : ChatRepository {
                 trySend(CustomResult.success(users)).isSuccess
 
             }
+
             override fun onCancelled(error: DatabaseError) {
                 trySend(CustomResult.failure(error.toException())).isFailure
             }
@@ -98,11 +96,11 @@ class FirebaseChatRepositoryImpl : ChatRepository {
         awaitClose { userReference.removeEventListener(listener) }
     }
 
-    override fun getRecentChattedUsersId(): Flow<CustomResult<List<String>>> = callbackFlow    {
-        val listener = object:  ValueEventListener{
+    override fun getRecentChattedUsersId(): Flow<CustomResult<List<String>>> = callbackFlow {
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val recentUserChatList = mutableListOf<String>()
-                snapshot.children.forEach{ chatSnapshot ->
+                snapshot.children.forEach { chatSnapshot ->
                     val chatId = chatSnapshot.key
                     val otherUserId = getOtherUserId(chatId.toString())
                     otherUserId.let { recentUserChatList.add(it) }
@@ -115,49 +113,50 @@ class FirebaseChatRepositoryImpl : ChatRepository {
             }
         }
         chatsReference.addValueEventListener(listener)
-        awaitClose{chatsReference.removeEventListener(listener)}
+        awaitClose { chatsReference.removeEventListener(listener) }
     }
 
-    override suspend fun getUsersByIdsFromAll(userIds: List<String>): Flow<CustomResult<List<User>>> = callbackFlow{
+    override suspend fun getUsersByIdsFromAll(userIds: List<String>): Flow<CustomResult<List<User>>> =
+        callbackFlow {
 
-            val listener = object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                 val users = mutableListOf<User>()
-                snapshot.children.forEach { userSnapshot ->
-                    val user = userSnapshot.getValue(User::class.java)
-                    if(user != null && userIds.contains(user.uid)){
-                        user.let { users.add(user) }
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val users = mutableListOf<User>()
+                    snapshot.children.forEach { userSnapshot ->
+                        val user = userSnapshot.getValue(User::class.java)
+                        if (user != null && userIds.contains(user.uid)) {
+                            user.let { users.add(user) }
+                        }
                     }
+                    trySend(CustomResult.success(users)).isSuccess
+
                 }
-                trySend(CustomResult.success(users)).isSuccess
+
+                override fun onCancelled(error: DatabaseError) {
+                    trySend(CustomResult.failure(error.toException())).isFailure
+                }
 
             }
+            userReference.addValueEventListener(listener)
+            awaitClose { userReference.removeEventListener(listener) }
 
-            override fun onCancelled(error: DatabaseError) {
-                trySend(CustomResult.failure(error.toException())).isFailure
-            }
 
         }
-        userReference.addValueEventListener(listener)
-        awaitClose { userReference.removeEventListener(listener) }
-
-
-    }
 
     override fun getChatRoomId(userOneId: String, userTwoId: String): String {
         return if (userOneId < userTwoId) "${userOneId}_${userTwoId}" else "${userTwoId}_${userOneId}"
     }
 
-    override fun getMessageCount(otherUserId: String): Flow<Int> = callbackFlow{
-         val currentUserId = authRepository.getCurrentUser()?.uid
-        if(currentUserId == null){
+    override fun getMessageCount(otherUserId: String): Flow<Int> = callbackFlow {
+        val currentUserId = authRepository.getCurrentUser()?.uid
+        if (currentUserId == null) {
             send(0)
             close()
             return@callbackFlow
         }
 
         val chatRoomId = getChatRoomId(currentUserId, otherUserId)
-        val listener = object :ValueEventListener{
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val count = snapshot.getValue(Int::class.java) ?: 0
                 trySend(count).isSuccess
@@ -178,63 +177,60 @@ class FirebaseChatRepositoryImpl : ChatRepository {
 
 
     override fun resetMessageCount(userId: String) {
-         val currentUserId = authRepository.getCurrentUser()?.uid
-        if(currentUserId == null){
+        val currentUserId = authRepository.getCurrentUser()?.uid
+        if (currentUserId == null) {
             return
         }
 
-        chatsReference.child(getChatRoomId(currentUserId, userId)).child("${userId}_receiverCount").setValue(0)
+        chatsReference.child(getChatRoomId(currentUserId, userId)).child("${userId}_receiverCount")
+            .setValue(0)
             .addOnCompleteListener { task ->
-                if(task.isSuccessful){
+                if (task.isSuccessful) {
                     Log.d("messages", "Message Count reset to 0")
-                }else{
+                } else {
                     Log.d("messages", "Message Count: Failure")
                 }
             }
     }
 
 
-
-
-    private fun getOtherUserId(chatRoomId: String): String{
+    private fun getOtherUserId(chatRoomId: String): String {
         val userIdOne = chatRoomId.split("_")[0]
         val userIdTwo = chatRoomId.split("_")[1]
-        return if(currentUserId == userIdOne){
+        return if (currentUserId == userIdOne) {
             userIdTwo
-        }else if (currentUserId == userIdTwo) {
+        } else if (currentUserId == userIdTwo) {
             userIdOne
-        }else{
+        } else {
             ""
         }
     }
 
-    suspend fun setMessageCount(message: Message, chatRoomId: String){
-        val receiverMessageCountRef = chatsReference.child(chatRoomId).child("${message.senderId}_receiverCount")
-         suspendCancellableCoroutine<Unit> { cont->
-             receiverMessageCountRef.runTransaction(object: Transaction.Handler{
-                 override fun doTransaction(currentData: MutableData): Transaction.Result {
-                      val currentCount = currentData.getValue(Int::class.java) ?: 0
-                     currentData.value = currentCount + 1
-                     return Transaction.success(currentData)
+    suspend fun setMessageCount(message: Message, chatRoomId: String) {
+        val receiverMessageCountRef =
+            chatsReference.child(chatRoomId).child("${message.senderId}_receiverCount")
+        suspendCancellableCoroutine<Unit> { cont ->
+            receiverMessageCountRef.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    val currentCount = currentData.getValue(Int::class.java) ?: 0
+                    currentData.value = currentCount + 1
+                    return Transaction.success(currentData)
+                }
 
-                 }
-
-                 override fun onComplete(
-                     error: DatabaseError?,
-                     committed: Boolean,
-                     currentData: DataSnapshot?
-                 ) {
-                     if(error != null){
-                         cont.resumeWithException(error.toException())
-                     }else{
-                         cont.resume(Unit)
-                     }
-                 }
-             })
-         }
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    if (error != null) {
+                        cont.resumeWithException(error.toException())
+                    } else {
+                        cont.resume(Unit)
+                    }
+                }
+            })
+        }
     }
-
-
 
 
 }
