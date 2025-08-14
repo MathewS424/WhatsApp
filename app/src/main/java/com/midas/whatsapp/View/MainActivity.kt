@@ -29,19 +29,15 @@ import com.midas.whatsapp.ViewModel.LoginViewModel
 import com.midas.whatsapp.ViewModel.UserListViewModel
 import com.midas.whatsapp.databinding.ActivityMainBinding
 import com.midas.whatsapp.util.CustomResult
+import com.midas.whatsapp.util.ViewExtension.gone
+import com.midas.whatsapp.util.ViewExtension.show
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var mainBinding: ActivityMainBinding
-
     private val signInViewModel: LoginViewModel by viewModels()
     private val userListViewModel: UserListViewModel by viewModels()
-
-
     private lateinit var userAdapter: UserAdapter
-
     private var searchMenuItem: MenuItem? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -56,17 +52,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-
         setupViewPagerAndTabs()
         setupListeners()
         setUpRecyclerView()
         setUpObservers()
-
-
-
     }
-
-
 
     private fun setupViewPagerAndTabs() {
         val viewPager2Adapter = MainViewPagerAdapter(supportFragmentManager, lifecycle)
@@ -92,12 +82,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun triggerLogout() {
-
         signInViewModel.signOut()
         val intent = Intent(this@MainActivity, SignUpActivity::class.java)
         startActivity(intent)
         finish()
-
     }
 
     private fun setUpObservers() {
@@ -146,7 +134,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
-
         searchMenuItem = menu?.findItem(R.id.menu_search)
         val searchView = searchMenuItem?.actionView as? SearchView
         searchView?.apply {
@@ -168,23 +155,25 @@ class MainActivity : AppCompatActivity() {
 
             searchMenuItem?.setOnActionExpandListener(object: MenuItem.OnActionExpandListener{
                 override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                    mainBinding.toolbarTitle.visibility = android.view.View.GONE
-                    mainBinding.tabLayout.visibility = android.view.View.GONE
-                    mainBinding.viewPager2.visibility = android.view.View.GONE
-                    mainBinding.recyclerViewMainRecentUsers.visibility = View.VISIBLE
-
+                    with(mainBinding){
+                        toolbarTitle.gone()
+                        tabLayout.gone()
+                        viewPager2.gone()
+                        recyclerViewMainRecentUsers.show()
+                    }
                     return true
                 }
 
                 override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                    mainBinding.toolbarTitle.visibility = android.view.View.VISIBLE
-                    mainBinding.tabLayout.visibility = android.view.View.VISIBLE
-                    mainBinding.viewPager2.visibility = android.view.View.VISIBLE
-                    mainBinding.recyclerViewMainRecentUsers.visibility = View.GONE
+                    with(mainBinding){
+                        toolbarTitle.show()
+                        tabLayout.show()
+                        viewPager2.show()
+                        recyclerViewMainRecentUsers.gone()
+                    }
                     searchView.setQuery("", false)
                     return true
                 }
-
             })
         }
         return true
@@ -214,7 +203,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setUpRecyclerView(){
         userAdapter = UserAdapter{user->
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
@@ -232,9 +220,10 @@ class MainActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-        mainBinding.recyclerViewMainRecentUsers.layoutManager = LinearLayoutManager(this)
-        mainBinding.recyclerViewMainRecentUsers.adapter = userAdapter
-
+        with(mainBinding){
+            recyclerViewMainRecentUsers.layoutManager = LinearLayoutManager(this@MainActivity)
+            recyclerViewMainRecentUsers.adapter = userAdapter
+        }
     }
 
     private fun cameraAccess(){

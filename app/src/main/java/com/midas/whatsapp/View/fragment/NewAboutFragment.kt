@@ -32,15 +32,20 @@ class NewAboutFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentNewAboutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpListeners()
+    }
+
+
+    private fun setUpListeners(){
         userProfileViewModel.userProfile.observe(requireActivity()) { user ->
-            binding.newAboutEditText.setText(user.about)
+            binding.newAboutEditText.setText(user?.about ?: "")
         }
         binding.saveButton.setOnClickListener {
             saveAboutTextData()
@@ -48,11 +53,11 @@ class NewAboutFragment : BottomSheetDialogFragment() {
     }
 
     private fun saveAboutTextData(){
-
-            aboutViewModel.aboutText.value = binding.newAboutEditText.text.toString()
-            binding.newAboutEditText.setText("")
-            dismiss()
-
+        val aboutText = binding.newAboutEditText.text.toString()
+        aboutViewModel.aboutText.value = aboutText
+        userProfileViewModel.updateAbout(aboutText)
+        binding.newAboutEditText.setText("")
+        dismiss()
     }
 
 }

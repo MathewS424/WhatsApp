@@ -20,14 +20,14 @@ import com.midas.whatsapp.View.adapter.UserAdapter
 import com.midas.whatsapp.ViewModel.UserListViewModel
 import com.midas.whatsapp.databinding.ActivityUserListBinding
 import com.midas.whatsapp.util.CustomResult
+import com.midas.whatsapp.util.ViewExtension.gone
+import com.midas.whatsapp.util.ViewExtension.show
 
 class UserListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserListBinding
     private val userListViewModel: UserListViewModel by viewModels()
-
     private lateinit var userAdapter: UserAdapter
-
     private var searchMenuItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,14 +84,18 @@ class UserListActivity : AppCompatActivity() {
             })
             searchMenuItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
                 override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                    binding.toolbarTitle.visibility = View.GONE
-                    binding.toolbarSubtitle.visibility = View.GONE
+                    with(binding){
+                        toolbarTitle.gone()
+                        toolbarSubtitle.gone()
+                    }
                     return true
                 }
 
                 override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                    binding.toolbarTitle.visibility = View.VISIBLE
-                    binding.toolbarSubtitle.visibility = View.VISIBLE
+                    with(binding){
+                        toolbarTitle.show()
+                        toolbarSubtitle.show()
+                    }
                     searchView.setQuery("", false)
                     return true
                 }
@@ -122,10 +126,10 @@ class UserListActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-
-        binding.recyclerViewUsers.layoutManager = LinearLayoutManager(this)
-        binding.recyclerViewUsers.adapter = userAdapter
-
+        with(binding){
+            recyclerViewUsers.layoutManager = LinearLayoutManager(this@UserListActivity)
+            recyclerViewUsers.adapter = userAdapter
+        }
     }
 
     private fun setUpObservers() {

@@ -3,8 +3,6 @@ package com.midas.whatsapp.View
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
-
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -62,6 +60,57 @@ class ChangeAboutActivity : AppCompatActivity() {
 
         aboutViewModel.aboutText.observe(this){
             binding.aboutEditView.setText(it)
+        }
+
+        binding.availableId.setOnClickListener {
+            val text = binding.availableId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.busyId.setOnClickListener {
+            val text = binding.busyId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.atSchoolId.setOnClickListener {
+            val text = binding.atSchoolId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.atWorkId.setOnClickListener {
+            val text = binding.atWorkId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.batteryId.setOnClickListener {
+            val text = binding.batteryId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.talkTextId.setOnClickListener {
+            val text = binding.talkTextId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.meetingId.setOnClickListener {
+            val text = binding.meetingId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.movieId.setOnClickListener {
+            val text = binding.movieId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.sleepingId.setOnClickListener {
+            val text = binding.sleepingId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
+        }
+        binding.urgentCallId.setOnClickListener {
+            val text = binding.urgentCallId.text.toString()
+            aboutViewModel.aboutText.value = text
+            viewModel.updateAbout(text)
         }
     }
 }

@@ -36,8 +36,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun setUpProfileDataAndUi() {
 
-        viewModel.userProfile.observe(this){user ->
-            if(user != null) {
+        viewModel.userProfile.observe(this) { user ->
+            if (user != null) {
                 val userName = user.displayName
                 val about = user.about
 

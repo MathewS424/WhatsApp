@@ -70,11 +70,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         viewModel.isLoading.observe(this@LoginActivity){ isLoading ->
-            loginBinding.whatsappProgressBarLogIn.visibility = if(isLoading) View.VISIBLE else View.INVISIBLE
-            loginBinding.logInBtn.isEnabled = !isLoading
-            loginBinding.textViewSignUp.isEnabled = !isLoading
-            loginBinding.editTextLogInEmail.isEnabled = !isLoading
-            loginBinding.editTextLogInPassword.isEnabled = !isLoading
+
+            with(loginBinding){
+                whatsappProgressBarLogIn.visibility = if(isLoading) View.VISIBLE else View.INVISIBLE
+                logInBtn.isEnabled = !isLoading
+                textViewSignUp.isEnabled = !isLoading
+                editTextLogInEmail.isEnabled = !isLoading
+                editTextLogInPassword.isEnabled = !isLoading
+            }
         }
     }
 

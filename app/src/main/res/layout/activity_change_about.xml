@@ -117,6 +117,7 @@
         app:layout_constraintVertical_bias="0.03">
 
         <TextView
+            android:id="@+id/availableId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -124,6 +125,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/busyId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -131,6 +133,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/atSchoolId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -139,6 +142,7 @@
 
 
         <TextView
+            android:id="@+id/atWorkId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -146,6 +150,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/batteryId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -153,6 +158,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/talkTextId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -160,6 +166,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/meetingId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -167,6 +174,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/movieId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -175,6 +183,7 @@
 
 
         <TextView
+            android:id="@+id/sleepingId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
@@ -182,6 +191,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/urgentCallId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"

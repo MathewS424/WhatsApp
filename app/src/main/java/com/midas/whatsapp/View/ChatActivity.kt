@@ -34,13 +34,10 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private val chatViewModel: ChatViewModel by viewModels()
-
     private lateinit var messageAdapter: MessageAdapter
     private var otherUserId: String? = null
     private var otherUserName: String? = null
-
     private var isSendMode = false
-
     private val userListViewModel: UserListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +51,6 @@ class ChatActivity : AppCompatActivity() {
             insets
         }
 
-
         otherUserId = intent.getStringExtra("otherUserId")
         otherUserName = intent.getStringExtra("otherUserName")
 
@@ -64,8 +60,6 @@ class ChatActivity : AppCompatActivity() {
             finish()
             return
         }
-
-
         // Set up the toolbar for the chat screen
         setSupportActionBar(binding.chatToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -78,13 +72,9 @@ class ChatActivity : AppCompatActivity() {
         setUpObservers()
 
         otherUserId?.let { chatViewModel.initializeChat(it) }
-
-
     }
-
     //  Handle toolbar back button click
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         if (item.itemId == android.R.id.home) {
             onBackPressedDispatcher.onBackPressed()
             userListViewModel.resetMessageCount(otherUserId.toString())
@@ -106,8 +96,10 @@ class ChatActivity : AppCompatActivity() {
         }
         messageAdapter = MessageAdapter(currentUserId)
         val layoutManager = LinearLayoutManager(this)
-        binding.recyclerViewMessages.layoutManager = layoutManager
-        binding.recyclerViewMessages.adapter = messageAdapter
+        with(binding){
+            recyclerViewMessages.layoutManager = layoutManager
+            recyclerViewMessages.adapter = messageAdapter
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -147,7 +139,6 @@ class ChatActivity : AppCompatActivity() {
             }
             false
         }
-
 
         binding.etMessage.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -196,9 +187,11 @@ class ChatActivity : AppCompatActivity() {
         }
 
         chatViewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            binding.btnSend.isEnabled = !isLoading
-            binding.etMessage.isEnabled = !isLoading
+            with(binding){
+                progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                btnSend.isEnabled = !isLoading
+                etMessage.isEnabled = !isLoading
+            }
         }
     }
 
@@ -240,6 +233,4 @@ class ChatActivity : AppCompatActivity() {
     private fun disableEmojiPickerVisibility(){
         binding.emojiPicker.visibility = View.GONE
     }
-
-
 }

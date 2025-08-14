@@ -139,11 +139,12 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         signUpViewModel.isLoading.observe(this) { isLoading ->
-            signUpBinding.whatsappProgressBar.visibility =
-                if (isLoading) View.VISIBLE else View.GONE
-            signUpBinding.registerBtn.isEnabled = !isLoading
-            signUpBinding.editTextSignUpEmail.isEnabled = !isLoading
-            signUpBinding.editTextSignUpPassword.isEnabled = !isLoading
+            with(signUpBinding){
+                whatsappProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                registerBtn.isEnabled = !isLoading
+                editTextSignUpEmail.isEnabled = !isLoading
+                editTextSignUpPassword.isEnabled = !isLoading
+            }
         }
     }
 

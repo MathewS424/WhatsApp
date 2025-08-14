@@ -47,8 +47,10 @@ class SettingsActivity : AppCompatActivity() {
         super.onStart()
         viewModel.userProfile.observe(this){ user ->
             if(user != null){
-                binding.tvUserName.text = user.displayName
-                binding.tvAbout.text = user.about
+                with(binding){
+                    tvUserName.text = user.displayName
+                    tvAbout.text = user.about
+                }
             }
 
         }
