@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.midas.whatsapp.R
+import com.midas.whatsapp.View.SegmentedRingView
 import com.midas.whatsapp.databinding.FragmentStatusBinding
 
 class StatusFragment : Fragment() {
@@ -23,7 +24,10 @@ class StatusFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.tvFragmentTitle.text = "Status"
+        val segmentedRingView: SegmentedRingView = binding.segmentedRing
+
+        segmentedRingView.segmentsCompleted = 3
+        segmentedRingView.invalidate()
     }
 
     override fun onDestroyView() {

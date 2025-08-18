@@ -73,7 +73,7 @@ class UserListActivity : AppCompatActivity() {
 //                        "Search Submitted: ${query}",
 //                        Toast.LENGTH_SHORT
 //                    ).show()
-//                    searchMenuItem?.collapseActionView()
+//                      searchMenuItem?.collapseActionView()
                     return true
                 }
 
@@ -84,7 +84,7 @@ class UserListActivity : AppCompatActivity() {
             })
             searchMenuItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
                 override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                    with(binding){
+                    with(binding) {
                         toolbarTitle.gone()
                         toolbarSubtitle.gone()
                     }
@@ -92,7 +92,7 @@ class UserListActivity : AppCompatActivity() {
                 }
 
                 override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                    with(binding){
+                    with(binding) {
                         toolbarTitle.show()
                         toolbarSubtitle.show()
                     }
@@ -126,7 +126,7 @@ class UserListActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-        with(binding){
+        with(binding) {
             recyclerViewUsers.layoutManager = LinearLayoutManager(this@UserListActivity)
             recyclerViewUsers.adapter = userAdapter
         }

@@ -8,7 +8,7 @@
     <color name="colorMessageReceived">#FFFFFF</color> <!-- White (Received Message Bubble) -->
     <color name="colorBackground">#ece5dd</color>     <!-- Chat Background -->
     <color name="colorSurface">#128C7E</color>        <!-- Teal (Secondary UI, Action Bar) -->
-    <color name="colorLink">#34b7f1</color>           <!-- Blue (Links, ticks) -->
+    <color name="colorLink">#008080</color>           <!-- Blue (Links, ticks) -->
     <color name="colorTextPrimary">#000000</color>    <!-- Main text color -->
     <color name="colorTextSecondary">#757575</color>  <!-- Secondary text color -->
     <color name="colorDivider">#e0e0e0</color>        <!-- Divider lines -->
