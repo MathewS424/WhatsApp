@@ -11,7 +11,7 @@ import android.view.View
 class SegmentedRingView @JvmOverloads  constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): View(context, attrs, defStyleAttr){
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = 20f    // Thickness of the ring
+        strokeWidth = 10f    // Thickness of the ring
     }
 
     private val rectF = RectF()
