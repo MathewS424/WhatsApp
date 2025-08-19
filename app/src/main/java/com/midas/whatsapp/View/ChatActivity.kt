@@ -1,6 +1,7 @@
 package com.midas.whatsapp.View
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,8 +27,14 @@ import com.midas.whatsapp.View.adapter.MessageAdapter
 import com.midas.whatsapp.ViewModel.ChatViewModel
 import com.midas.whatsapp.ViewModel.UserListViewModel
 import com.midas.whatsapp.databinding.ActivityChatBinding
+import com.midas.whatsapp.util.AppConstants
 
 import com.midas.whatsapp.util.CustomResult
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig
+import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser
+import java.util.Collections
 
 
 class ChatActivity : AppCompatActivity() {
@@ -40,6 +47,9 @@ class ChatActivity : AppCompatActivity() {
     private var isSendMode = false
     private val userListViewModel: UserListViewModel by viewModels()
 
+    private lateinit var voiceCallBtn: ZegoSendCallInvitationButton
+    private lateinit var videoCallBtn: ZegoSendCallInvitationButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,6 +60,10 @@ class ChatActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
             insets
         }
+
+        videoCallBtn = binding.btnVideoCall
+        voiceCallBtn = binding.btnCall
+
 
         otherUserId = intent.getStringExtra("otherUserId")
         otherUserName = intent.getStringExtra("otherUserName")
@@ -66,6 +80,11 @@ class ChatActivity : AppCompatActivity() {
         binding.chatToolbar.navigationIcon?.setTint(ContextCompat.getColor(this, R.color.white))
         supportActionBar?.title = ""
         binding.tvOtherUserName.text = otherUserName
+
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: "" //
+
+        val config = ZegoUIKitPrebuiltCallInvitationConfig() //
+        ZegoUIKitPrebuiltCallService.init(application, AppConstants.appVideoCallId.toLong(), AppConstants.appVideoCallSign, currentUserId, currentUserId, config)  //
 
         setUpRecyclerView()
         setUpListeners()
@@ -117,6 +136,7 @@ class ChatActivity : AppCompatActivity() {
                 Toast.makeText(this@ChatActivity, "Message cannot be empty", Toast.LENGTH_SHORT)
                     .show()
             }
+            setUpVideoCall(otherUserId.toString())
         }
 
         binding.etMessage.setOnTouchListener { v, event ->
@@ -162,7 +182,16 @@ class ChatActivity : AppCompatActivity() {
         binding.etMessage.setOnClickListener {
             disableEmojiPickerVisibility()
             changeEditTextDrawableStartToEmojiIconInsert()
+
         }
+
+
+
+
+
+
+
+
     }
 
     private fun setUpObservers() {
@@ -193,6 +222,8 @@ class ChatActivity : AppCompatActivity() {
                 etMessage.isEnabled = !isLoading
             }
         }
+
+
     }
 
     private fun switchToSendIcon() {
@@ -232,5 +263,17 @@ class ChatActivity : AppCompatActivity() {
 
     private fun disableEmojiPickerVisibility(){
         binding.emojiPicker.visibility = View.GONE
+    }
+
+    private fun setUpVoiceCall(userName: String){
+        voiceCallBtn.setIsVideoCall(false)
+        voiceCallBtn.resourceID = "zego_uikit_call"
+        voiceCallBtn.setInvitees(Collections.singletonList(ZegoUIKitUser(userName, userName)))
+    }
+
+    private fun setUpVideoCall(userName: String){
+        videoCallBtn.setIsVideoCall(true)
+        videoCallBtn.resourceID = "zego_uikit_call"
+        videoCallBtn.setInvitees(Collections.singletonList(ZegoUIKitUser(userName, userName)))
     }
 }

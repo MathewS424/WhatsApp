@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.midas.whatsapp"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -116,6 +116,8 @@ dependencies {
     implementation("com.google.android.material:material:1.2.0") // Or newer
 
     implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
+
+    implementation("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")    // Add this line to your module-level build.gradle file's dependencies, usually named [app].
 
 
 }

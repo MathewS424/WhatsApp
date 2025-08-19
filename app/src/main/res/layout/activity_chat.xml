@@ -53,7 +53,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="User Name" />
 
-            <ImageButton
+            <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
                 android:id="@+id/btnVideoCall"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -63,7 +63,7 @@
                 app:layout_constraintEnd_toStartOf="@id/btnCall"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
+            <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
                 android:id="@+id/btnCall"
                 android:layout_width="40dp"
                 android:layout_height="40dp"

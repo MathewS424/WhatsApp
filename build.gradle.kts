@@ -7,3 +7,4 @@ plugins {
     // IMPORTANT: Update KSP plugin version to be compatible with Kotlin 2.0.0
     id("com.google.devtools.ksp") version "2.0.0-1.0.21" apply false // CHANGED FROM 1.9.0-1.0.13 to 2.0.0-1.0.21 (compatible with Kotlin 2.0.0)
 }
+

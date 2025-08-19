@@ -19,6 +19,9 @@
         android:theme="@style/Theme.WhatsApp"
         tools:targetApi="31">
         <activity
+            android:name=".View.VideoCallActivity"
+            android:exported="false" />
+        <activity
             android:name=".View.ChangeAboutActivity"
             android:exported="false" />
         <activity

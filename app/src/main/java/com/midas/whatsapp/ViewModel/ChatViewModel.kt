@@ -24,6 +24,8 @@ class ChatViewModel(
     private val _sendMessageResult = MutableLiveData<CustomResult<Unit>>()
     val sendMessageResult: LiveData<CustomResult<Unit>> = _sendMessageResult
 
+
+
     private val _isLoading = MutableLiveData<Boolean>(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -79,4 +81,10 @@ class ChatViewModel(
 
         }
     }
+
+
+
+
+
+
 }
